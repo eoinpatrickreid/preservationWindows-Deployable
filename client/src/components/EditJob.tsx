@@ -801,24 +801,25 @@ const EditJob: React.FC = () => {
                           )}
                         />
                       </FormControl>
-                      <FormControl>
+                      <FormControl isRequired>
                         <FormLabel>Price Change (%)</FormLabel>
                         <Controller
                           control={control}
                           name={`rooms.${index}.priceChange2`}
-                          render={() => (
+                          defaultValue="0"
+                          rules={{ required: true }}
+                          render={({ field, fieldState }) => (
                             <Input
-                            type="text"
-                            {...register(`rooms.${index}.priceChange2`, {
-                              required: true,
-                            })}
-                            bg="white"
-                            _focus={{ bg: "white", boxShadow: "outline" }}
-                            boxShadow="sm"
-                            borderRadius="md"
-                            borderColor="gray.300"
-                            size="sm"
-                          />
+                              type="text"
+                              {...field}
+                              bg="white"
+                              _focus={{ bg: "white", boxShadow: "outline" }}
+                              boxShadow="sm"
+                              borderRadius="md"
+                              borderColor="gray.300"
+                              size="sm"
+                              isInvalid={!!fieldState.error}
+                            />
                           )}
                         />
                       </FormControl>
@@ -880,23 +881,23 @@ const EditJob: React.FC = () => {
                 </GridItem>
                 <GridItem>
                   <Box bg="gray.200" p={4} borderRadius="md">
-                      <FormControl>
-                        <FormLabel>Window Notes</FormLabel>
-                        <Textarea
-                          {...register(`rooms.${index}.windowNotes`)}
-                          placeholder="Window notes"
-                          size="md"
-                          height="105px"
-                        />
-                      </FormControl>
+                    <FormControl>
+                      <FormLabel>Window Notes</FormLabel>
+                      <Textarea
+                        {...register(`rooms.${index}.windowNotes`)}
+                        placeholder="Window notes"
+                        size="md"
+                        height="105px"
+                      />
+                    </FormControl>
                   </Box>
                 </GridItem>
                 <Stack spacing={1} p={0}>
-                <GridItem>
-                  <Box bg="gray.200" p={2} borderRadius="md">
-                    <FormControl>
-                      <FormLabel>Custom Item Text</FormLabel>
-                      <Input
+                  <GridItem>
+                    <Box bg="gray.200" p={2} borderRadius="md">
+                      <FormControl>
+                        <FormLabel>Custom Item Text</FormLabel>
+                        <Input
                           type="text"
                           {...register(`rooms.${index}.customItemText`)}
                           bg="white"
@@ -906,68 +907,63 @@ const EditJob: React.FC = () => {
                           borderColor="gray.300"
                           size="sm"
                         />
-                    </FormControl>
-                  </Box>
-                </GridItem>
-                <GridItem>
-                  <Box bg="gray.200" p={2} borderRadius="md">
-                    <FormControl>
-                      <FormLabel>Custom Item</FormLabel>
-                      <Controller
-                        control={control}
-                        name={`rooms.${index}.customItem2`}
-                        render={({ field }) => (
-                          <NumberInput
-                            min={0}
-                            size="sm"
-                            value={field.value}
-                            onChange={(valueString) =>
-                              field.onChange(Number(valueString))
-                            }
-                          >
-                            <NumberInputField
-                              bg="white"
-                              _focus={{ bg: "white", boxShadow: "outline" }}
-                              boxShadow="sm"
-                              borderRadius="md"
-                              borderColor="gray.300"
-                            />
-                            <NumberInputStepper>
-                              <NumberIncrementStepper />
-                              <NumberDecrementStepper />
-                            </NumberInputStepper>
-                          </NumberInput>
-                        )}
-                      />
-                    </FormControl>
-                  </Box>
-                </GridItem>
+                      </FormControl>
+                    </Box>
+                  </GridItem>
+                  <GridItem>
+                    <Box bg="gray.200" p={2} borderRadius="md">
+                      <FormControl>
+                        <FormLabel>Custom Item</FormLabel>
+                        <Controller
+                          control={control}
+                          name={`rooms.${index}.customItem2`}
+                          render={({ field }) => (
+                            <NumberInput
+                              min={0}
+                              size="sm"
+                              value={field.value}
+                              onChange={(valueString) =>
+                                field.onChange(Number(valueString))
+                              }
+                            >
+                              <NumberInputField
+                                bg="white"
+                                _focus={{ bg: "white", boxShadow: "outline" }}
+                                boxShadow="sm"
+                                borderRadius="md"
+                                borderColor="gray.300"
+                              />
+                              <NumberInputStepper>
+                                <NumberIncrementStepper />
+                                <NumberDecrementStepper />
+                              </NumberInputStepper>
+                            </NumberInput>
+                          )}
+                        />
+                      </FormControl>
+                    </Box>
+                  </GridItem>
                 </Stack>
               </Grid>
             </Box>
           ))}
         </VStack>
         <VStack spacing={1} align="center">
-              <Button
-                mt={4}
-                onClick={addRoom}
-                colorScheme="teal"
-                variant="outline"
-              >
-                Add Room
-              </Button>
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                colorScheme="teal"
-                size="lg"
-                mt={6}
-                isLoading={isSubmitting}
-              >
-                Update Job
-              </Button>
-            </VStack>
-          </form>
+          <Button mt={4} onClick={addRoom} colorScheme="teal" variant="outline">
+            Add Room
+          </Button>
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            colorScheme="teal"
+            size="lg"
+            mt={6}
+            isLoading={isSubmitting}
+          >
+            Update Job
+          </Button>
+        </VStack>
+      </form>
     </>
   );
 };

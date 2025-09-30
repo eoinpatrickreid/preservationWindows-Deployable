@@ -235,11 +235,12 @@ const Create: React.FC = () => {
 
   const onValidSubmit = (data: Job) => {
     // Check all rooms for count === 0
-    const invalidRoom = data.rooms.find(room => room.count === 0);
+    const invalidRoom = data.rooms.find((room) => room.count === 0);
     if (invalidRoom) {
       toast({
         title: "Error",
-        description: "One or more rooms have a count of 0. Please enter a valid count.",
+        description:
+          "One or more rooms have a count of 0. Please enter a valid count.",
         status: "error",
         duration: 4000,
         isClosable: true,
@@ -387,7 +388,7 @@ const Create: React.FC = () => {
                     <Controller
                       control={control}
                       name="options"
-                      rules={{ required: "Please select an option." }} 
+                      rules={{ required: "Please select an option." }}
                       render={({ field }) => (
                         <Stack direction="row" spacing={2}>
                           {availableOptions.map((option) => (
@@ -426,7 +427,7 @@ const Create: React.FC = () => {
                     <Controller
                       control={control}
                       name="planningPermission"
-                      rules={{ required: "Planning Permission is required" }} 
+                      rules={{ required: "Planning Permission is required" }}
                       render={({ field, fieldState: { error } }) => (
                         <>
                           <MultiOptionToggle
@@ -791,24 +792,25 @@ const Create: React.FC = () => {
                           )}
                         />
                       </FormControl>
-                      <FormControl>
+                      <FormControl isRequired>
                         <FormLabel>Price Change (%)</FormLabel>
                         <Controller
                           control={control}
                           name={`rooms.${index}.priceChange2`}
-                          render={() => (
+                          defaultValue="0"
+                          rules={{ required: true }}
+                          render={({ field, fieldState }) => (
                             <Input
-                          type="text"
-                          {...register(`rooms.${index}.priceChange2`, {
-                            required: true,
-                          })}
-                          bg="white"
-                          _focus={{ bg: "white", boxShadow: "outline" }}
-                          boxShadow="sm"
-                          borderRadius="md"
-                          borderColor="gray.300"
-                          size="sm"
-                        />
+                              type="text"
+                              {...field}
+                              bg="white"
+                              _focus={{ bg: "white", boxShadow: "outline" }}
+                              boxShadow="sm"
+                              borderRadius="md"
+                              borderColor="gray.300"
+                              size="sm"
+                              isInvalid={!!fieldState.error}
+                            />
                           )}
                         />
                       </FormControl>
@@ -882,11 +884,11 @@ const Create: React.FC = () => {
                   </Box>
                 </GridItem>
                 <Stack spacing={1} p={0}>
-                <GridItem>
-                  <Box bg="gray.200" p={2} borderRadius="md">
-                    <FormControl>
-                      <FormLabel>Custom Item Text</FormLabel>
-                      <Input
+                  <GridItem>
+                    <Box bg="gray.200" p={2} borderRadius="md">
+                      <FormControl>
+                        <FormLabel>Custom Item Text</FormLabel>
+                        <Input
                           type="text"
                           {...register(`rooms.${index}.customItemText`)}
                           bg="white"
@@ -896,42 +898,42 @@ const Create: React.FC = () => {
                           borderColor="gray.300"
                           size="sm"
                         />
-                    </FormControl>
-                  </Box>
-                </GridItem>
-                <GridItem>
-                  <Box bg="gray.200" p={2} borderRadius="md">
-                    <FormControl>
-                      <FormLabel>Custom Item</FormLabel>
-                      <Controller
-                        control={control}
-                        name={`rooms.${index}.customItem2`}
-                        render={({ field }) => (
-                          <NumberInput
-                            min={0}
-                            size="sm"
-                            value={field.value}
-                            onChange={(valueString) =>
-                              field.onChange(Number(valueString))
-                            }
-                          >
-                            <NumberInputField
-                              bg="white"
-                              _focus={{ bg: "white", boxShadow: "outline" }}
-                              boxShadow="sm"
-                              borderRadius="md"
-                              borderColor="gray.300"
-                            />
-                            <NumberInputStepper>
-                              <NumberIncrementStepper />
-                              <NumberDecrementStepper />
-                            </NumberInputStepper>
-                          </NumberInput>
-                        )}
-                      />
-                    </FormControl>
-                  </Box>
-                </GridItem>
+                      </FormControl>
+                    </Box>
+                  </GridItem>
+                  <GridItem>
+                    <Box bg="gray.200" p={2} borderRadius="md">
+                      <FormControl>
+                        <FormLabel>Custom Item</FormLabel>
+                        <Controller
+                          control={control}
+                          name={`rooms.${index}.customItem2`}
+                          render={({ field }) => (
+                            <NumberInput
+                              min={0}
+                              size="sm"
+                              value={field.value}
+                              onChange={(valueString) =>
+                                field.onChange(Number(valueString))
+                              }
+                            >
+                              <NumberInputField
+                                bg="white"
+                                _focus={{ bg: "white", boxShadow: "outline" }}
+                                boxShadow="sm"
+                                borderRadius="md"
+                                borderColor="gray.300"
+                              />
+                              <NumberInputStepper>
+                                <NumberIncrementStepper />
+                                <NumberDecrementStepper />
+                              </NumberInputStepper>
+                            </NumberInput>
+                          )}
+                        />
+                      </FormControl>
+                    </Box>
+                  </GridItem>
                 </Stack>
               </Grid>
             </Box>
