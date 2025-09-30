@@ -21,12 +21,39 @@ const Links = [
   {name: "Ipad", to: "/createIpad" },
 ];
 
+const navbarStyles = `
+.navbar-texture {
+  position: relative;
+  background: linear-gradient(110deg, #5c9385 0%, #8ec7b7 100%);
+  box-shadow: 0 4px 18px 0 rgba(60,70,70,0.11);
+  z-index: 10;
+  overflow: hidden;
+}
+.navbar-texture::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Subtle glassy overlay with white diagonal streaks and noise */
+  background: 
+    linear-gradient(120deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.03) 100%),
+    url('https://www.transparenttextures.com/patterns/natural-paper.png');
+  opacity: 0.23;
+  z-index: 1;
+}
+.navbar-content {
+  position: relative;
+  z-index: 2;
+}
+`;
+
 const Navbar: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isAuthenticated, logout } = useContext(AuthContext);
 
   return (
     <>
+    <style>{navbarStyles}</style>
       <Box bg="#74A69A" px={4}>
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           {/* Hamburger Menu for Mobile */}
@@ -39,8 +66,8 @@ const Navbar: React.FC = () => {
           />
           {/* Logo or Brand Name */}
           <HStack spacing={8} alignItems={"center"}>
-            <Box color="white" fontWeight="bold" fontSize="lg">
-              Preservation Quotes
+          <Box color="white"  fontFamily="Karrie, Arial, sans-serif" fontWeight="bold" fontSize="lg" letterSpacing="1px" style={{textShadow:"0 2px 8px rgba(40,80,80,0.12)"}}>
+          Preservation Quotes
             </Box>
             {/* Links */}
             <HStack

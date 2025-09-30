@@ -450,6 +450,7 @@ const formatRoomDetails = (room: Room): string[][] => {
   detailsArray.push("• Colour in: TBC");
   detailsArray.push("• Colour Out: TBC");
   detailsArray.push("• Ironmongery: TBC");
+  detailsArray.push("• Sash Restrictor: TBC");
 
   let customItemText = "Custom Item";
   if (room.customItemText !== "") {
@@ -496,7 +497,7 @@ const calculateRoomCost = (room: Room): number => {
     .map(Number)
     .reduce((a, b) => a + b);
   let priceChange = 0;
-  if (room.priceChange2 != "") {
+  if (room.priceChange2 != "0") {
     priceChange = parseFloat(room.priceChange2.replace("%", ""));
   } else {
     priceChange = room.priceChange || 0;
@@ -566,8 +567,8 @@ const calculateRoomCost = (room: Room): number => {
     console.log("Added Stain Repairs Cost:", `£${stainCost}`);
   }
   if (room.shutters) {
-    totalCost += 120;
-    console.log("Added Shutters Cost:", "£120");
+    totalCost += 150;
+    console.log("Added Shutters Cost:", "£150");
   }
   if (room.concealedVent) {
     totalCost += 45;
@@ -605,6 +606,11 @@ const NewWindowsPDF: React.FC<{ job: Job }> = ({ job }) => {
   const companyAddress = "124 Great Western Road";
   const companyCity = "Glasgow";
   const stateZip = "G4 9AD";
+
+  const anyCasement = useMemo(
+    () => job.rooms?.some((r) => !!r.casement) ?? false,
+    [job.rooms]
+  );
 
   let adminFee = 0;
   let planningFee = 0;
@@ -700,8 +706,8 @@ const NewWindowsPDF: React.FC<{ job: Job }> = ({ job }) => {
         {/* Project Summary */}
         <View style={styles.section}>
           <Text style={styles.sectionTitleTop}>
-            Project Summary: To supply and fit new hardwood double glazed sash
-            and case windows.
+            Project Summary: To supply and fit new hardwood double glazed{" "}
+            {anyCasement ? "casement windows" : "sash and case windows"}.
           </Text>
           <View style={styles.tableHeader}>
             <Text style={[styles.tableHeaderCell, styles.tableColRef]}>
@@ -781,7 +787,8 @@ const NewWindowsPDF: React.FC<{ job: Job }> = ({ job }) => {
                     {room.roomName}
                   </Text>
                   <Text style={[styles.tableCell, styles.tableColDescription]}>
-                    {room.width} x {room.height} mm Sash and Case
+                    {room.width} x {room.height} mm{" "}
+                    {room.casement ? "Casement" : "Sash and Case"}
                   </Text>
                   <Text style={[styles.tableCell, styles.tableColQuantity]}>
                     {room.count || 0}

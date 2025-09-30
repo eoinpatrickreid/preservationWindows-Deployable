@@ -437,7 +437,7 @@ const calculateRoomCost = (
   if (room.mastic)
     costBreakdown[
       "• Strip out exterior pointing and replace with new poly sealant"
-    ] = 110;
+    ] = 160;
   if (room.masticPatch) costBreakdown["• Carry out mastic patch repairs"] = 50;
   if (room.paint)
     costBreakdown["• Paint on completion of works inside and out"] = 160;
@@ -456,10 +456,10 @@ const calculateRoomCost = (
   if (room.cill) {
     switch (room.cill.toLowerCase()) {
       case "full":
-        costBreakdown["• Strip out and replace one full sill"] = 160;
+        costBreakdown["• Strip out and replace one full sill"] = 240;
         break;
       case "half":
-        costBreakdown["• Strip out and replace one half sill"] = 90;
+        costBreakdown["• Strip out and replace one half sill"] = 160;
         break;
       case "repairs":
         costBreakdown["• Carry out sill repairs"] = 70;

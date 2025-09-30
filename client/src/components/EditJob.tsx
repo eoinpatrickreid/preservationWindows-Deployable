@@ -241,7 +241,7 @@ const EditJob: React.FC = () => {
       glassType: "Clear",
       glassTypeTopBottom: "Bottom",
       casement: false,
-      priceChange2: "",
+      priceChange2: "0",
       priceChange: 0,
       priceChangeNotes: "",
       positiveNegative: "positive",
