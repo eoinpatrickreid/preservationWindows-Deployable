@@ -66,6 +66,9 @@ type Room struct {
     CustomItem2      int     `json:"customItem2" bson:"customItem2"`
     QuoteNotes       string  `json:"quoteNotes" bson:"quoteNotes"`
     WindowNotes      string  `json:"windowNotes" bson:"windowNotes"`
+    CenterMullion   int    `json:"centerMullion" bson:"centerMullion"`
+    SashRestrictor  bool   `json:"sashRestrictor" bson:"sashRestrictor"`
+
 }
 
 type Job struct {
@@ -176,14 +179,26 @@ func main() {
     }))
 
     app.Static("/", "./client/dist")
-
     app.Post("/api/register", registerUser)
     app.Post("/api/login", loginUser)
-
+    
     app.Use(jwtware.New(jwtware.Config{
         SigningKey:   []byte(jwtSecret),
         ErrorHandler: jwtError,
+        Filter: func(c *fiber.Ctx) bool {
+            path := c.Path()
+            if !strings.HasPrefix(path, "/api") {
+                return true
+            }
+    
+            if path == "/api/login" || path == "/api/register" {
+                return true
+            }
+    
+            return false
+        },
     }))
+    
 
     app.Get("/api/jobs", getJobs)
     app.Get("/api/jobs/:id", getJob)

@@ -72,10 +72,12 @@ const getDefaultRoom = (): Room => ({
   handles: false,
   shutters: false,
   customItem: false,
+  sashRestrictor: false,
   customItemText: "",
   customItem2: 0,
   quoteNotes: "",
   windowNotes: "",
+  centerMullion: 0,
 });
 
 const CreateIpad: React.FC = () => {

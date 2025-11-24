@@ -426,6 +426,9 @@ const formatRoomDetails = (room: Room): string[][] => {
       `• Carry out ${room.encapsulation} feature glass encapsulation(s)`
     );
   }
+  if (room.centerMullion > 0){
+    detailsArray.push(`• Strip out and replace ${room.centerMullion} decorative mullion(s)`)
+  }
   if (room.dormer) {
     detailsArray.push("• Dormer Window");
   }
@@ -556,6 +559,9 @@ const calculateRoomCost = (room: Room): number => {
   if (room.dormer) {
     totalCost += 420;
     console.log("Added Dormer Cost:", "£420");
+  }
+  if (room.centerMullion>0){
+    totalCost += 150 * room.centerMullion
   }
   if (room.easyClean || room.eC) {
     totalCost += 80;

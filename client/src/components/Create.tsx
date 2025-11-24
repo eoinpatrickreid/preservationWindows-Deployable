@@ -9,8 +9,6 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Input,
-  Textarea,
   Checkbox,
   NumberInput,
   NumberInputField,
@@ -31,6 +29,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import MultiOptionToggle from "./MultiOptionToggle";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
+import SpellcheckInput from "./SpellCheckInput";
+import SpellcheckTextarea from "./SpellCheckTextarea";
 
 const Create: React.FC = () => {
   // Initialize the current date in 'YYYY-MM-DD' format
@@ -41,13 +41,14 @@ const Create: React.FC = () => {
 
   const toast = useToast();
   const navigate = useNavigate();
-
+  const [hasSaved, setHasSaved] = React.useState(false);
   // Use React Hook Form
   const {
     control,
     register,
     handleSubmit,
-    formState: {},
+    getValues,
+    formState: { isDirty, isSubmitting },
   } = useForm<Job>({
     defaultValues: {
       completed: false,
@@ -98,10 +99,12 @@ const Create: React.FC = () => {
           handles: false,
           shutters: false,
           customItem: false,
+          sashRestrictor: false,
           customItemText: "",
           customItem2: 0,
           quoteNotes: "",
           windowNotes: "",
+          centerMullion: 0,
         },
       ],
       options: [],
@@ -124,6 +127,9 @@ const Create: React.FC = () => {
       const response = await axiosInstance.post("/api/jobs", data);
       console.log("Job created:", response.data);
       const createdJob: Job = response.data as Job;
+
+      setHasSaved(true);
+
       toast({
         title: "Job Created",
         description: "The job has been successfully created.",
@@ -189,6 +195,7 @@ const Create: React.FC = () => {
     { label: "6/6", value: "6/6" },
     { label: "6/6_portrait", value: "6/6_side" },
     { label: "7/1", value: "7/1" },
+    { label: "9/1", value: "9/1" },
     { label: "placeholder", value: "placeholder" },
   ];
 
@@ -232,6 +239,28 @@ const Create: React.FC = () => {
     { name: "shutters", label: "Shutter Repairs" },
     { name: "customItem", label: "Custom Item" },
   ];
+
+  // Simple beforeunload guard using the same validation rule as submit (rooms.count !== 0)
+  React.useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      // Only care if the user has touched the form and it isn't saved / submitting
+      if (!isDirty || isSubmitting || hasSaved) return;
+
+      const data = getValues();
+      const invalidRoom = data.rooms?.find((room) => room.count === 0);
+
+      if (!invalidRoom) {
+        // Same rule as submit: only block if a room has count === 0
+        return;
+      }
+
+      event.preventDefault();
+      event.returnValue = ""; // Required for Chrome
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [getValues, isDirty, isSubmitting, hasSaved]);
 
   const onValidSubmit = (data: Job) => {
     // Check all rooms for count === 0
@@ -280,7 +309,7 @@ const Create: React.FC = () => {
                 <Stack spacing={1}>
                   <FormControl isRequired>
                     <FormLabel>Date</FormLabel>
-                    <Input
+                    <SpellcheckInput
                       type="date"
                       {...register("date", { required: true })}
                       bg="white"
@@ -293,7 +322,7 @@ const Create: React.FC = () => {
                   </FormControl>
                   <FormControl>
                     <FormLabel>Address</FormLabel>
-                    <Input
+                    <SpellcheckInput
                       type="text"
                       {...register("addressLineOne")}
                       bg="white"
@@ -307,7 +336,7 @@ const Create: React.FC = () => {
                   </FormControl>
                   <FormControl>
                     <FormLabel></FormLabel>
-                    <Input
+                    <SpellcheckInput
                       type="text"
                       {...register("addressLineTwo")}
                       bg="white"
@@ -321,7 +350,7 @@ const Create: React.FC = () => {
                   </FormControl>
                   <FormControl>
                     <FormLabel></FormLabel>
-                    <Input
+                    <SpellcheckInput
                       type="text"
                       {...register("addressLineThree")}
                       bg="white"
@@ -342,7 +371,7 @@ const Create: React.FC = () => {
                   {/* 4th Field */}
                   <FormControl isRequired>
                     <FormLabel>Customer Name</FormLabel>
-                    <Input
+                    <SpellcheckInput
                       type="text"
                       {...register("customerName", { required: true })}
                       bg="white"
@@ -355,7 +384,7 @@ const Create: React.FC = () => {
                   </FormControl>
                   <FormControl>
                     <FormLabel>Email</FormLabel>
-                    <Input
+                    <SpellcheckInput
                       type="email"
                       {...register("email")}
                       bg="white"
@@ -368,7 +397,7 @@ const Create: React.FC = () => {
                   </FormControl>
                   <FormControl>
                     <FormLabel>Phone</FormLabel>
-                    <Input
+                    <SpellcheckInput
                       type="tel"
                       {...register("phone")}
                       bg="white"
@@ -446,7 +475,7 @@ const Create: React.FC = () => {
                   </FormControl>
                   <FormControl>
                     <FormLabel>Site Notes</FormLabel>
-                    <Textarea
+                    <SpellcheckTextarea
                       {...register("siteNotes")}
                       placeholder="Site notes"
                       size="md"
@@ -490,7 +519,7 @@ const Create: React.FC = () => {
                     <HStack>
                       <FormControl isRequired>
                         <FormLabel>Ref</FormLabel>
-                        <Input
+                        <SpellcheckInput
                           type="text"
                           {...register(`rooms.${index}.ref`, {
                             required: true,
@@ -506,7 +535,7 @@ const Create: React.FC = () => {
 
                       <FormControl isRequired>
                         <FormLabel>Location</FormLabel>
-                        <Input
+                        <SpellcheckInput
                           type="text"
                           {...register(`rooms.${index}.roomName`, {
                             required: true,
@@ -800,7 +829,7 @@ const Create: React.FC = () => {
                           defaultValue="0"
                           rules={{ required: true }}
                           render={({ field, fieldState }) => (
-                            <Input
+                            <SpellcheckInput
                               type="text"
                               {...field}
                               bg="white"
@@ -816,19 +845,48 @@ const Create: React.FC = () => {
                       </FormControl>
 
                       <FormControl>
-                        <FormLabel>Positive/Negative</FormLabel>
+                        <FormLabel>+/-</FormLabel>
                         <Controller
                           control={control}
                           name={`rooms.${index}.positiveNegative`}
                           render={({ field }) => (
                             <MultiOptionToggle
                               options={[
-                                { label: "Positive", value: "positive" },
-                                { label: "Negative", value: "negative" },
+                                { label: "+", value: "positive" },
+                                { label: "-", value: "negative" },
                               ]}
                               value={field.value}
                               onChange={field.onChange}
                             />
+                          )}
+                        />
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel>Center Mullion</FormLabel>
+                        <Controller
+                          control={control}
+                          name={`rooms.${index}.centerMullion`}
+                          render={({ field }) => (
+                            <NumberInput
+                              min={0}
+                              size="sm"
+                              value={field.value}
+                              onChange={(valueString) =>
+                                field.onChange(Number(valueString))
+                              }
+                            >
+                              <NumberInputField
+                                bg="white"
+                                _focus={{ bg: "white", boxShadow: "outline" }}
+                                boxShadow="sm"
+                                borderRadius="md"
+                                borderColor="gray.300"
+                              />
+                              <NumberInputStepper>
+                                <NumberIncrementStepper />
+                                <NumberDecrementStepper />
+                              </NumberInputStepper>
+                            </NumberInput>
                           )}
                         />
                       </FormControl>
@@ -874,7 +932,7 @@ const Create: React.FC = () => {
                   <Box bg="gray.200" p={4} borderRadius="md">
                     <FormControl>
                       <FormLabel>Window Notes</FormLabel>
-                      <Textarea
+                      <SpellcheckTextarea
                         {...register(`rooms.${index}.windowNotes`)}
                         placeholder="Window notes"
                         size="md"
@@ -888,7 +946,7 @@ const Create: React.FC = () => {
                     <Box bg="gray.200" p={2} borderRadius="md">
                       <FormControl>
                         <FormLabel>Custom Item Text</FormLabel>
-                        <Input
+                        <SpellcheckInput
                           type="text"
                           {...register(`rooms.${index}.customItemText`)}
                           bg="white"
@@ -981,10 +1039,12 @@ const Create: React.FC = () => {
                 handles: false,
                 shutters: false,
                 customItem: false,
+                sashRestrictor: false,
                 customItemText: "",
                 customItem2: 0,
                 quoteNotes: "",
                 windowNotes: "",
+                centerMullion: 0,
               })
             }
             colorScheme="teal"

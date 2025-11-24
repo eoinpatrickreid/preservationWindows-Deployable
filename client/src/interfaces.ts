@@ -31,6 +31,7 @@ export interface Room {
     trickleVent: boolean;
     shutters: boolean;
     handles: boolean;
+    sashRestrictor: false;
     priceChange: number;
     priceChange2: string;
     positiveNegative: string;
@@ -41,6 +42,7 @@ export interface Room {
     customItem2: number;
     quoteNotes: string;
     windowNotes: string;
+    centerMullion: number;
   }
   
   export interface Job {

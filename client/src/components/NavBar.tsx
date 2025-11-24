@@ -67,7 +67,7 @@ const Navbar: React.FC = () => {
           {/* Logo or Brand Name */}
           <HStack spacing={8} alignItems={"center"}>
           <Box color="white"  fontFamily="Karrie, Arial, sans-serif" fontWeight="bold" fontSize="lg" letterSpacing="1px" style={{textShadow:"0 2px 8px rgba(40,80,80,0.12)"}}>
-          Preservation Quotes (TEST)
+          Preservation Quotes
             </Box>
             {/* Links */}
             <HStack

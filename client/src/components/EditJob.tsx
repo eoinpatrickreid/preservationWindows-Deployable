@@ -10,8 +10,6 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Input,
-  Textarea,
   Checkbox,
   NumberInput,
   NumberInputField,
@@ -33,11 +31,14 @@ import {
 } from "@chakra-ui/react";
 import MultiOptionToggle from "./MultiOptionToggle";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
+import SpellcheckInput from "./SpellCheckInput";
+import SpellcheckTextarea from "./SpellCheckTextarea";
 
 const EditJob: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const toast = useToast();
+  const [hasSaved, setHasSaved] = React.useState(false);
 
   // Use React Hook Form
   const {
@@ -45,7 +46,7 @@ const EditJob: React.FC = () => {
     register,
     handleSubmit,
     reset,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
   } = useForm<Job>({
     defaultValues: {
       completed: false,
@@ -100,9 +101,26 @@ const EditJob: React.FC = () => {
     fetchJob();
   }, [id, reset, replace, toast]);
 
+  // beforeunload guard: warn if there are unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      // Only block if the form has been modified, is not submitting, and not yet saved
+      if (!isDirty || isSubmitting || hasSaved) return;
+
+      event.preventDefault();
+      event.returnValue = ""; // Required for Chrome
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty, isSubmitting, hasSaved]);
+
   const onSubmit = async (data: Job) => {
     try {
       await axiosInstance.put(`/api/jobs/${id}`, data);
+
+      setHasSaved(true);
+
       toast({
         title: "Job Updated",
         description: "The job has been successfully updated.",
@@ -252,10 +270,12 @@ const EditJob: React.FC = () => {
       handles: false,
       shutters: false,
       customItem: false,
+      sashRestrictor: false,
       customItemText: "",
       customItem2: 0,
       quoteNotes: "",
       windowNotes: "",
+      centerMullion: 0,
     });
   };
 
@@ -298,7 +318,7 @@ const EditJob: React.FC = () => {
                 <Stack spacing={1}>
                   <FormControl isRequired>
                     <FormLabel>Date</FormLabel>
-                    <Input
+                    <SpellcheckInput
                       type="date"
                       {...register("date", { required: true })}
                       bg="white"
@@ -311,7 +331,7 @@ const EditJob: React.FC = () => {
                   </FormControl>
                   <FormControl>
                     <FormLabel>Address</FormLabel>
-                    <Input
+                    <SpellcheckInput
                       type="text"
                       {...register("addressLineOne")}
                       bg="white"
@@ -325,7 +345,7 @@ const EditJob: React.FC = () => {
                   </FormControl>
                   <FormControl>
                     <FormLabel></FormLabel>
-                    <Input
+                    <SpellcheckInput
                       type="text"
                       {...register("addressLineTwo")}
                       bg="white"
@@ -339,7 +359,7 @@ const EditJob: React.FC = () => {
                   </FormControl>
                   <FormControl>
                     <FormLabel></FormLabel>
-                    <Input
+                    <SpellcheckInput
                       type="text"
                       {...register("addressLineThree")}
                       bg="white"
@@ -360,7 +380,7 @@ const EditJob: React.FC = () => {
                   {/* 4th Field */}
                   <FormControl isRequired>
                     <FormLabel>Customer Name</FormLabel>
-                    <Input
+                    <SpellcheckInput
                       type="text"
                       {...register("customerName", { required: true })}
                       bg="white"
@@ -373,7 +393,7 @@ const EditJob: React.FC = () => {
                   </FormControl>
                   <FormControl>
                     <FormLabel>Email</FormLabel>
-                    <Input
+                    <SpellcheckInput
                       type="email"
                       {...register("email")}
                       bg="white"
@@ -386,7 +406,7 @@ const EditJob: React.FC = () => {
                   </FormControl>
                   <FormControl>
                     <FormLabel>Phone</FormLabel>
-                    <Input
+                    <SpellcheckInput
                       type="tel"
                       {...register("phone")}
                       bg="white"
@@ -455,7 +475,7 @@ const EditJob: React.FC = () => {
                   </FormControl>
                   <FormControl>
                     <FormLabel>Site Notes</FormLabel>
-                    <Textarea
+                    <SpellcheckTextarea
                       {...register("siteNotes")}
                       placeholder="Site notes"
                       size="md"
@@ -499,7 +519,7 @@ const EditJob: React.FC = () => {
                     <HStack>
                       <FormControl isRequired>
                         <FormLabel>Ref</FormLabel>
-                        <Input
+                        <SpellcheckInput
                           type="text"
                           {...register(`rooms.${index}.ref`, {
                             required: true,
@@ -515,7 +535,7 @@ const EditJob: React.FC = () => {
 
                       <FormControl isRequired>
                         <FormLabel>Location</FormLabel>
-                        <Input
+                        <SpellcheckInput
                           type="text"
                           {...register(`rooms.${index}.roomName`, {
                             required: true,
@@ -809,7 +829,7 @@ const EditJob: React.FC = () => {
                           defaultValue="0"
                           rules={{ required: true }}
                           render={({ field, fieldState }) => (
-                            <Input
+                            <SpellcheckInput
                               type="text"
                               {...field}
                               bg="white"
@@ -825,19 +845,48 @@ const EditJob: React.FC = () => {
                       </FormControl>
 
                       <FormControl>
-                        <FormLabel>Positive/Negative</FormLabel>
+                        <FormLabel>+/-</FormLabel>
                         <Controller
                           control={control}
                           name={`rooms.${index}.positiveNegative`}
                           render={({ field }) => (
                             <MultiOptionToggle
                               options={[
-                                { label: "Positive", value: "positive" },
-                                { label: "Negative", value: "negative" },
+                                { label: "+", value: "positive" },
+                                { label: "-", value: "negative" },
                               ]}
                               value={field.value}
                               onChange={field.onChange}
                             />
+                          )}
+                        />
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel>Center Mullion</FormLabel>
+                        <Controller
+                          control={control}
+                          name={`rooms.${index}.centerMullion`}
+                          render={({ field }) => (
+                            <NumberInput
+                              min={0}
+                              size="sm"
+                              value={field.value}
+                              onChange={(valueString) =>
+                                field.onChange(Number(valueString))
+                              }
+                            >
+                              <NumberInputField
+                                bg="white"
+                                _focus={{ bg: "white", boxShadow: "outline" }}
+                                boxShadow="sm"
+                                borderRadius="md"
+                                borderColor="gray.300"
+                              />
+                              <NumberInputStepper>
+                                <NumberIncrementStepper />
+                                <NumberDecrementStepper />
+                              </NumberInputStepper>
+                            </NumberInput>
                           )}
                         />
                       </FormControl>
@@ -883,7 +932,7 @@ const EditJob: React.FC = () => {
                   <Box bg="gray.200" p={4} borderRadius="md">
                     <FormControl>
                       <FormLabel>Window Notes</FormLabel>
-                      <Textarea
+                      <SpellcheckTextarea
                         {...register(`rooms.${index}.windowNotes`)}
                         placeholder="Window notes"
                         size="md"
@@ -897,7 +946,7 @@ const EditJob: React.FC = () => {
                     <Box bg="gray.200" p={2} borderRadius="md">
                       <FormControl>
                         <FormLabel>Custom Item Text</FormLabel>
-                        <Input
+                        <SpellcheckInput
                           type="text"
                           {...register(`rooms.${index}.customItemText`)}
                           bg="white"
