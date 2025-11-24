@@ -237,6 +237,7 @@ const Create: React.FC = () => {
     { name: "handles", label: "Handles" },
     { name: "outsidePatch", label: "Outside Patch" },
     { name: "shutters", label: "Shutter Repairs" },
+    { name: "sashRestrictor", label: "Sash Restrictor" },
     { name: "customItem", label: "Custom Item" },
   ];
 
@@ -822,7 +823,7 @@ const Create: React.FC = () => {
                         />
                       </FormControl>
                       <FormControl isRequired>
-                        <FormLabel>Price Change (%)</FormLabel>
+                        <FormLabel>Price Change</FormLabel>
                         <Controller
                           control={control}
                           name={`rooms.${index}.priceChange2`}
@@ -845,7 +846,7 @@ const Create: React.FC = () => {
                       </FormControl>
 
                       <FormControl>
-                        <FormLabel>+/-</FormLabel>
+                        <FormLabel></FormLabel>
                         <Controller
                           control={control}
                           name={`rooms.${index}.positiveNegative`}

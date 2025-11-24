@@ -228,6 +228,7 @@ const EditJob: React.FC = () => {
     { name: "handles", label: "Handles" },
     { name: "outsidePatch", label: "Outside Facing Patch" },
     { name: "shutters", label: "Shutter Repairs" },
+    { name: "sashRestrictor", label: "Sash Restrictor" },
     { name: "customItem", label: "Custom Item" },
   ];
 
