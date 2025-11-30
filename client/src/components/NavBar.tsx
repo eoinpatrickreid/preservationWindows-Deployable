@@ -18,7 +18,9 @@ const Links = [
   { name: "Home", to: "/" },
   { name: "Create Quote", to: "/create" },
   { name: "View Quotes", to: "/viewAll" },
+  {name: "View Drawings", to: "/viewAllDrawings" },
   {name: "Ipad", to: "/createIpad" },
+
 ];
 
 const navbarStyles = `
