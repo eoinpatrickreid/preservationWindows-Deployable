@@ -11,9 +11,11 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import TemporaryFormation from "./components/TemporaryFormation";
 import CreateIpad from "./components/CreateIpad";
-//import Test from "./components/Test";
+import ViewAllDrawings from "./components/ViewAllDrawings";
+import ViewDrawing from "./components/ViewDrawing";
+import EditDrawing from "./components/EditDrawing";
 
-// Inside your Routes
+//import Test from "./components/Test";
 
 const App: React.FC = () => {
   return (
@@ -27,7 +29,6 @@ const App: React.FC = () => {
         <Route path="/view" element={<View />} />
         <Route path="/temporaryFormation" element={<TemporaryFormation />} />
 
-
         <Route
           path="/viewAll"
           element={
@@ -38,6 +39,10 @@ const App: React.FC = () => {
         />
         <Route path="/viewSingle/:id" element={<ViewSingle />} />
         <Route path="/editJob/:id" element={<EditJob />} />
+
+        <Route path="/viewAllDrawings" element={<ViewAllDrawings />} />
+        <Route path="/viewDrawing/:id" element={<ViewDrawing />} />
+        <Route path="/editDrawing/:id" element={<EditDrawing />} />
 
         {/* <Route path="/viewSingle/:id" element={<ViewSingle />} /> */}
       </Routes>

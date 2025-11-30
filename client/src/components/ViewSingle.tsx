@@ -40,7 +40,9 @@ const ViewSingle: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
-  const [isDownloadingMap, setIsDownloadingMap] = useState<{ [option: string]: boolean }>({});
+  const [isDownloadingMap, setIsDownloadingMap] = useState<{
+    [option: string]: boolean;
+  }>({});
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -76,7 +78,10 @@ const ViewSingle: React.FC = () => {
     if (!job) return;
     try {
       // Clone the job data and update the date to the current date (YYYY-MM-DD)
-      const duplicateJob = { ...job, date: new Date().toISOString().split("T")[0] };
+      const duplicateJob = {
+        ...job,
+        date: new Date().toISOString().split("T")[0],
+      };
       // Remove fields that should not be copied
       delete duplicateJob._id;
       delete duplicateJob.quoteId;
@@ -102,6 +107,40 @@ const ViewSingle: React.FC = () => {
         duration: 5000,
         isClosable: true,
       });
+    }
+  };
+
+  // Drawing/ invoice helper
+  const [isConverting, setIsConverting] = useState(false);
+
+  const handleConvertToDrawing = async () => {
+    if (!id) return;
+    try {
+      setIsConverting(true);
+      const response = await axiosInstance.post<Job>(
+        `/api/jobs/${id}/convert-to-drawing`
+      );
+      const drawing = response.data;
+      toast({
+        title: "Converted to Drawing",
+        description: "This job has been converted to a drawing list.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      navigate(`/viewDrawing/${drawing._id}`);
+    } catch (err: any) {
+      console.error(err);
+      toast({
+        title: "Error",
+        description:
+          err.response?.data?.error || "Failed to convert job to drawing.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsConverting(false);
     }
   };
 
@@ -167,12 +206,20 @@ const ViewSingle: React.FC = () => {
         <VStack spacing={4} align="stretch">
           <HStack spacing={4} justify="center">
             {/* Edit Quote Button */}
-            <Button colorScheme="teal" variant="solid" onClick={() => navigate(`/editJob/${id}`)}>
+            <Button
+              colorScheme="teal"
+              variant="solid"
+              onClick={() => navigate(`/editJob/${id}`)}
+            >
               Edit Quote
             </Button>
 
             {/* Duplicate Quote Button */}
-            <Button colorScheme="teal" variant="solid" onClick={handleDuplicate}>
+            <Button
+              colorScheme="teal"
+              variant="solid"
+              onClick={handleDuplicate}
+            >
               Duplicate Quote
             </Button>
 
@@ -189,7 +236,9 @@ const ViewSingle: React.FC = () => {
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement("a");
                     link.href = url;
-                    link.download = `${job.customerName.replace(/ /g, "_")}_${job.date}_${option}_QUOTE.pdf`;
+                    link.download = `${job.customerName.replace(/ /g, "_")}_${
+                      job.date
+                    }_${option}_QUOTE.pdf`;
                     document.body.appendChild(link);
                     link.click();
                     link.parentNode?.removeChild(link);
@@ -197,7 +246,10 @@ const ViewSingle: React.FC = () => {
                   } catch (error) {
                     console.error("Error generating PDF:", error);
                   } finally {
-                    setIsDownloadingMap((prev) => ({ ...prev, [option]: false }));
+                    setIsDownloadingMap((prev) => ({
+                      ...prev,
+                      [option]: false,
+                    }));
                   }
                 };
 
@@ -223,6 +275,14 @@ const ViewSingle: React.FC = () => {
               Delete Quote
             </Button>
           </HStack>
+          <Button
+            colorScheme="teal"
+            variant="outline"
+            isLoading={isConverting}
+            onClick={handleConvertToDrawing}
+          >
+            {isConverting ? "Converting..." : "Convert to Drawing"}
+          </Button>
         </VStack>
       </Box>
 

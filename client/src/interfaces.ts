@@ -63,6 +63,27 @@ export interface Room {
     addressLineTwo: string;
     addressLineThree: string;
   }
+
+  export interface Invoice {
+    _id?: string; // Optional since it will be assigned by MongoDB
+    quoteId?: number; // Changed from string to number
+    completed: boolean;
+    date: string;
+    customerName: string;
+    address: string;
+    email: string;
+    phone: string;
+    postCode: string;
+    rooms: Room[];
+    options: string[];
+    planningPermission: string; // Add this field
+    siteNotes: string; // Add this field
+    addressLineOne: string;
+    addressLineTwo: string;
+    addressLineThree: string;
+  }
+
+  export type Drawing = Job;
   
   export interface Calculations {
     subtotal: number;
